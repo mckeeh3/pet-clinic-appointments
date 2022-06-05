@@ -4,7 +4,7 @@
 
   <groupId>io.example</groupId>
   <artifactId>pet-clinic-appointments</artifactId>
-  <version>v1</version>
+  <version>v2</version>
   <packaging>jar</packaging>
 
   <name>pet-clinic-appointments</name>

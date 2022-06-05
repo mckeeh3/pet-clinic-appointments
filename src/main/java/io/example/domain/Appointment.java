@@ -66,8 +66,8 @@ public class Appointment extends AbstractAppointment {
   }
 
   private Optional<Effect<Empty>> reject(AppointmentEntity.AppointmentState state, AppointmentApi.CreateAppointmentCommand command) {
-    if (state.getTime().getSeconds() == 0) {
-      return Optional.of(effects().error(String.format("Appointment '{}' does not exist", command.getAppointmentId())));
+    if (state.getTime().getSeconds() > 0) {
+      return Optional.of(effects().error(String.format("Appointment '%s' already exists", command.getAppointmentId())));
     }
     if (command.getOwnerId().isBlank()) {
       return Optional.of(effects().error("Owner Id is required"));
@@ -83,24 +83,24 @@ public class Appointment extends AbstractAppointment {
 
   private Optional<Effect<Empty>> reject(AppointmentEntity.AppointmentState state, AppointmentApi.UpdateAppointmentCommand command) {
     if (state.getTime().getSeconds() == 0) {
-      return Optional.of(effects().error(String.format("Appointment '{}' does not exist", command.getAppointmentId())));
+      return Optional.of(effects().error(String.format("Appointment '%s' does not exist", command.getAppointmentId())));
     }
     if (state.getCanceledTime().getSeconds() > 0) {
-      return Optional.of(effects().error(String.format("Appointment '{}' has been canceled", command.getAppointmentId())));
+      return Optional.of(effects().error(String.format("Appointment '%s' has been canceled", command.getAppointmentId())));
     }
     return Optional.empty();
   }
 
   private Optional<Effect<Empty>> reject(AppointmentEntity.AppointmentState state, AppointmentApi.CancelAppointmentCommand command) {
     if (state.getTime().getSeconds() == 0) {
-      return Optional.of(effects().error(String.format("Appointment '{}' does not exist", command.getAppointmentId())));
+      return Optional.of(effects().error(String.format("Appointment '%s' does not exist", command.getAppointmentId())));
     }
     return Optional.empty();
   }
 
   private Optional<Effect<AppointmentApi.GetAppointmentResponse>> reject(AppointmentEntity.AppointmentState state, AppointmentApi.GetAppointmentRequest request) {
     if (state.getTime().getSeconds() == 0) {
-      return Optional.of(effects().error(String.format("Appointment '{}' does not exist", request.getAppointmentId())));
+      return Optional.of(effects().error(String.format("Appointment '%s' does not exist", request.getAppointmentId())));
     }
     return Optional.empty();
   }
