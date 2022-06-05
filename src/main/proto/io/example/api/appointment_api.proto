@@ -1,0 +1,86 @@
+// This is the public API offered by your entity.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "kalix/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+package io.example.api;
+
+option java_outer_classname = "AppointmentApi";
+
+service AppointmentService {
+  option (kalix.codegen) = {
+    event_sourced_entity: {
+      name: "io.example.domain.Appointment"
+      entity_type: "appointment"
+      state: "io.example.domain.AppointmentState"
+      events: [
+        "io.example.domain.AppointmentCreated",
+        "io.example.domain.AppointmentUpdated",
+        "io.example.domain.AppointmentCanceled"  //
+      ]
+    }
+  };
+
+  rpc CreateAppointment(CreateAppointmentCommand) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/appointments/create"
+      body: "*"
+    };
+  }
+
+  rpc UpdateAppointment(UpdateAppointmentCommand) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/appointments/update"
+      body: "*"
+    };
+  }
+
+  rpc CancelAppointment(CancelAppointmentCommand) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/appointments/cancel"
+      body: "*"
+    };
+  }
+
+  rpc GetAppointment(GetAppointmentRequest) returns (GetAppointmentResponse) {
+    option (google.api.http) = {
+      get: "/appointments/{appointment_id}"
+    };
+  }
+}
+
+message CreateAppointmentCommand {
+  string appointment_id = 1 [(kalix.field).entity_key = true];
+  google.protobuf.Timestamp time = 2;
+  string owner_id = 3;
+  string vet_id = 4;
+  string description = 5;
+}
+
+message UpdateAppointmentCommand {
+  string appointment_id = 1 [(kalix.field).entity_key = true];
+  google.protobuf.Timestamp time = 2;
+  string owner_id = 3;
+  string vet_id = 4;
+  string description = 5;
+}
+
+message CancelAppointmentCommand {
+  string appointment_id = 1 [(kalix.field).entity_key = true];
+}
+
+message GetAppointmentRequest {
+  string appointment_id = 1 [(kalix.field).entity_key = true];
+}
+
+message GetAppointmentResponse {
+  string appointment_id = 1 [(kalix.field).entity_key = true];
+  string owner_id = 2;
+  string vet_id = 3;
+  string description = 4;
+  google.protobuf.Timestamp time = 5;
+  google.protobuf.Timestamp canceled_time = 6;
+}

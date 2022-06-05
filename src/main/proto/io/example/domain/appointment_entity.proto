@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package io.example.domain;
+
+import "google/protobuf/timestamp.proto";
+
+option java_outer_classname = "AppointmentEntity";
+
+message AppointmentState {
+  string appointment_id = 1;
+  string owner_id = 2;
+  string vet_id = 3;
+  string description = 4;
+  google.protobuf.Timestamp time = 5;
+  google.protobuf.Timestamp canceled_time = 6;
+}
+
+message AppointmentCreated {
+  string appointment_id = 1;
+  string owner_id = 2;
+  string vet_id = 3;
+  string description = 4;
+  google.protobuf.Timestamp time = 5;
+}
+
+message AppointmentUpdated {
+  string appointment_id = 1;
+  string owner_id = 2;
+  string vet_id = 3;
+  string description = 4;
+  google.protobuf.Timestamp time = 5;
+  google.protobuf.Timestamp updated_time = 6;
+}
+
+message AppointmentCanceled {
+  string appointment_id = 1;
+  google.protobuf.Timestamp canceled_time = 2;
+}

@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package io.example.view;
+
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "kalix/annotations.proto";
+import "io/example/domain/appointment_entity.proto";
+
+option java_outer_classname = "AppointmentsByOwnerModel";
+service AppointmentsByOwner {
+  option (kalix.codegen) = {
+    view: {}
+  };
+
+  rpc GetAppointmentsByOwner(AppointmentsByOwnerRequest) returns (AppointmentsByOwnerResponse) {
+    option (kalix.method).view.query = {
+      query: "SELECT * AS appointments"
+             "  FROM appointments_by_owner"
+             " WHERE owner_id = :owner_id"
+             " ORDER BY time DESC"
+    };
+    option (google.api.http) = {
+      get: "/appointments-by-owner"
+    };
+  }
+
+  rpc OnAppointmentCreated(domain.AppointmentCreated) returns (domain.AppointmentState) {
+    option (kalix.method).eventing.in = {
+      event_sourced_entity: "appointment"
+    };
+    option (kalix.method).view.update = {
+      table: "appointments_by_owner"
+      transform_updates: true
+    };
+  }
+
+  rpc OnAppointmentUpdated(domain.AppointmentUpdated) returns (domain.AppointmentState) {
+    option (kalix.method).eventing.in = {
+      event_sourced_entity: "appointment"
+    };
+    option (kalix.method).view.update = {
+      table: "appointments_by_owner"
+      transform_updates: true
+    };
+  }
+
+  rpc OnAppointmentCanceled(domain.AppointmentCanceled) returns (domain.AppointmentState) {
+    option (kalix.method).eventing.in = {
+      event_sourced_entity: "appointment"
+    };
+    option (kalix.method).view.update = {
+      table: "appointments_by_owner"
+      transform_updates: true
+    };
+  }
+}
+
+message AppointmentsByOwnerRequest {
+  string owner_id = 1;
+}
+
+message AppointmentsByOwnerResponse {
+  repeated domain.AppointmentState appointments = 1;
+}

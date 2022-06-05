@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package io.example.view;
+
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "kalix/annotations.proto";
+import "io/example/domain/appointment_entity.proto";
+
+option java_outer_classname = "AppointmentsByVetModel";
+
+service AppointmentsByVet {
+  option (kalix.codegen) = {
+    view: {}
+  };
+
+  rpc GetAppointmentsByVet(AppointmentsByVetRequest) returns (AppointmentsByVetResponse) {
+    option (kalix.method).view.query = {
+      query: "SELECT * AS appointments"
+             "  FROM appointments_by_vet"
+             " WHERE vet_id = :vet_id"
+    };
+    option (google.api.http) = {
+      get: "/appointments-by-vet"
+    };
+  }
+
+  rpc OnAppointmentCreated(domain.AppointmentCreated) returns (domain.AppointmentState) {
+    option (kalix.method).eventing.in = {
+      event_sourced_entity: "appointment"
+    };
+    option (kalix.method).view.update = {
+      table: "appointments_by_vet"
+      transform_updates: true
+    };
+  }
+
+  rpc OnAppointmentUpdated(domain.AppointmentUpdated) returns (domain.AppointmentState) {
+    option (kalix.method).eventing.in = {
+      event_sourced_entity: "appointment"
+    };
+    option (kalix.method).view.update = {
+      table: "appointments_by_vet"
+      transform_updates: true
+    };
+  }
+
+  rpc OnAppointmentCanceled(domain.AppointmentCanceled) returns (domain.AppointmentState) {
+    option (kalix.method).eventing.in = {
+      event_sourced_entity: "appointment"
+    };
+    option (kalix.method).view.update = {
+      table: "appointments_by_vet"
+      transform_updates: true
+    };
+  }
+}
+
+message AppointmentsByVetRequest {
+  string vet_id = 1;
+}
+
+message AppointmentsByVetResponse {
+  repeated domain.AppointmentState appointments = 1;
+}
