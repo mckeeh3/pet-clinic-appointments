@@ -19,6 +19,7 @@ service AppointmentsByVet {
       query: "SELECT * AS appointments"
              "  FROM appointments_by_vet"
              " WHERE vet_id = :vet_id"
+             " ORDER BY time DESC"
     };
     option (google.api.http) = {
       get: "/appointments-by-vet"

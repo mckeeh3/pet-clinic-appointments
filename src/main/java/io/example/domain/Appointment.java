@@ -133,7 +133,7 @@ public class Appointment extends AbstractAppointment {
         .setAppointmentId(command.getAppointmentId())
         .setOwnerId(command.getOwnerId())
         .setVetId(command.getVetId())
-        .setDescription(command.getAppointmentId())
+        .setDescription(command.getDescription())
         .setTime(command.getTime())
         .build();
   }
@@ -144,7 +144,7 @@ public class Appointment extends AbstractAppointment {
         .setAppointmentId(command.getAppointmentId())
         .setOwnerId(command.getOwnerId())
         .setVetId(command.getVetId())
-        .setDescription(command.getAppointmentId())
+        .setDescription(command.getDescription())
         .setTime(command.getTime())
         .build();
   }
